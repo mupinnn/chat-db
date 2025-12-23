@@ -1,0 +1,13 @@
+# Production overrides - use with:  docker compose -f docker-compose.yml -f docker-compose.prod.yml up
+services:
+  api:
+    build:
+      args:
+        FLASK_ENV: production
+    environment:
+      - FLASK_ENV=production
+    volumes:
+      # Remove source code mount in production (use built image)
+      - sqlite_data:/app/data
+    # Remove port exposure in production (use nginx only)
+    ports: []
