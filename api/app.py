@@ -1,5 +1,6 @@
 import os
-from flask import Flask, g, jsonify
+import sqlite3
+from flask import Flask, g, jsonify, request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -133,6 +134,24 @@ def init_db():
 @app.route('/health')
 def health_check():
     return jsonify({'status': 'ok'})
+
+@app.route('/api/sales', methods=['GET'])
+def get_sales():
+    db = get_db()
+
+    limit = request.args.get('limit', 25, type=int)
+    offset = request.args.get('offset', 0, type=int)
+
+    query = 'SELECT * FROM coffee_sales WHERE 1=1 ORDER BY datetime DESC LIMIT ? OFFSET ?'
+    cursor = db.execute(query, [limit, offset])
+    sales = [dict(row) for row in cursor.fetchall()]
+
+    return jsonify({
+        'data': sales,
+        'count': len(sales),
+        'limit': limit,
+        'offset': offset
+    })
 
 if __name__ == '__main__':
     host = '0.0.0.0'
