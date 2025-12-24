@@ -3,14 +3,14 @@ import sqlite3
 from flask import Flask, g, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
-import google.generativeai as genai
+from google import genai
 
 load_dotenv()
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 DATABASE = os.getenv('DATABASE_PATH', '/app/data/db.sqlite')
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 app = Flask(__name__)
+client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
 CORS(app)
 
 PROMPT_QUERY = '''
@@ -150,10 +150,12 @@ def init_db():
     ''')
     db.commit()
 
-def get_gemini_response(question, prompt):
+def get_gemini_response(prompt):
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
-        response = model.generate_content([prompt, question])
+        response = client.models.generate_content(
+            model='gemini-2.5-flash',
+            contents=prompt,
+        )
         return response.text
     except Exception as e:
         return None
@@ -210,11 +212,11 @@ def ask_sales():
             return jsonify({ 'message': f'{field} is required' }), 400
 
     question = data['q']
-    sql_query = get_gemini_response(question, PROMPT_QUERY)
+    sql_query = get_gemini_response(PROMPT_QUERY.format(question=question))
     if (sql_query):
         result = read_sql_query(sql_query)
         if result:
-            human_friendly_response = get_gemini_response(question,  PROMPT_HUMAN_FRIENDLY.format(question=question, result=result))
+            human_friendly_response = get_gemini_response(PROMPT_HUMAN_FRIENDLY.format(question=question, result=result))
             return jsonify({ 'data': human_friendly_response })
 
     return jsonify({ 'message': "Can't query the data at the moment." }), 500
