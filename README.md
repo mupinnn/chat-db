@@ -29,6 +29,6 @@ docker-compose up -d
 
 ## Gallery
 
-![main page](./screenshots/dashboard.png)
+![main page](./screenshots/dashboard2.png)
 
-![chat sheet opened](./screenshots/chat%20opened.png)
+![chat sheet opened](./screenshots/chat%20opened2.png)
