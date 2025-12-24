@@ -81,7 +81,7 @@ export function App() {
           trigger={
             <Button>
               <MessageCircleIcon />
-              Ask this table
+              Ask for "Most purchased coffe?"
             </Button>
           }
         />
