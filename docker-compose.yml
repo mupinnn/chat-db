@@ -3,21 +3,20 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-      args:
-        FLASK_ENV: ${FLASK_ENV:-development}
     container_name: chat-db-api
     environment:
       - FLASK_ENV=${FLASK_ENV:-development}
       - DATABASE_PATH=/app/data/db.sqlite
       - CSV_SEED_FILE=/app/data/coffee-sales-datasets.csv
-      - PORT=5000
+      - PORT=${PORT:-5000}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - ALLOWED_CORS_ORIGIN=${ALLOWED_CORS_ORIGIN:-http://localhost:5173}
     volumes:
       # Mount source code for hot-reload in development
       - ./api:/app
-      # Persist SQLite database
       - sqlite_data:/app/data
     ports:
-      - "5000:5000"
+      - "${PORT:-5000}:${PORT:-5000}"
     restart: unless-stopped
 
 volumes:

@@ -11,7 +11,7 @@ DATABASE = os.getenv('DATABASE_PATH', '/app/data/db.sqlite')
 
 app = Flask(__name__)
 client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
-CORS(app)
+CORS(app, origins=[os.getenv("ALLOWED_CORS_ORIGIN")])
 
 PROMPT_QUERY = '''
     You are an expert SQL assistant. Your task is to generate a valid SQL query based on the user's question and the database schema provided.
