@@ -4,13 +4,7 @@ services:
       context: ./api
       dockerfile: Dockerfile
     container_name: chat-db-api
-    environment:
-      - FLASK_ENV=${FLASK_ENV:-development}
-      - DATABASE_PATH=/app/data/db.sqlite
-      - CSV_SEED_FILE=/app/data/coffee-sales-datasets.csv
-      - PORT=${PORT:-5000}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - ALLOWED_CORS_ORIGIN=${ALLOWED_CORS_ORIGIN:-http://localhost:5173}
+    env_file: ./api/.env
     volumes:
       # Mount source code for hot-reload in development
       - ./api:/app

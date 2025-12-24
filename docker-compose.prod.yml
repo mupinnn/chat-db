@@ -1,8 +1,18 @@
 services:
   api:
-    environment:
-      - FLASK_ENV=production
-    volumes:
+    volumes: !override
       - sqlite_data:/app/data
-    ports:
+    ports: !override
       - "127.0.0.1:${PORT:-5000}:${PORT:-5000}"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: chat-db-web
+    env_file: ./web/.env.local
+    ports:
+      - "127.0.0.1:5173:80"
+    depends_on:
+      - api
+    restart: unless-stopped
