@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from flask import Flask, g, jsonify, request
+from flask_cors import CORS
 from dotenv import load_dotenv
 import google.generativeai as genai
 
@@ -10,6 +11,7 @@ DATABASE = os.getenv('DATABASE_PATH', '/app/data/db.sqlite')
 
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 app = Flask(__name__)
+CORS(app)
 
 PROMPT_QUERY = '''
     You are an expert SQL assistant. Your task is to generate a valid SQL query based on the user's question and the database schema provided.
@@ -171,7 +173,7 @@ def read_sql_query(query):
 
     return None
 
-@app.route('/health')
+@app.route('/api/health')
 def health_check():
     return jsonify({'status': 'ok'})
 
@@ -182,13 +184,18 @@ def get_sales():
     limit = request.args.get('limit', 25, type=int)
     offset = request.args.get('offset', 0, type=int)
 
-    query = 'SELECT * FROM coffee_sales WHERE 1=1 ORDER BY datetime DESC LIMIT ? OFFSET ?'
-    cursor = db.execute(query, [limit, offset])
-    sales = [dict(row) for row in cursor.fetchall()]
+    sales_cursor = db.execute(
+        'SELECT * FROM coffee_sales WHERE 1=1 ORDER BY datetime DESC LIMIT ? OFFSET ?',
+        [limit, offset]
+    )
+    sales = [dict(row) for row in sales_cursor.fetchall()]
+
+    count_cursor = db.execute('SELECT COUNT(*) AS count FROM coffee_sales')
+    count = dict(count_cursor.fetchone())
 
     return jsonify({
         'data': sales,
-        'count': len(sales),
+        'count': count['count'],
         'limit': limit,
         'offset': offset
     })
@@ -204,10 +211,8 @@ def ask_sales():
 
     question = data['q']
     sql_query = get_gemini_response(question, PROMPT_QUERY)
-    app.logger.info(sql_query)
     if (sql_query):
         result = read_sql_query(sql_query)
-        app.logger.info(result)
         if result:
             human_friendly_response = get_gemini_response(question,  PROMPT_HUMAN_FRIENDLY.format(question=question, result=result))
             return jsonify({ 'data': human_friendly_response })

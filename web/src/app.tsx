@@ -1,4 +1,6 @@
-import { type ColumnDef } from "@tanstack/react-table";
+import { useState } from "react";
+import { type ColumnDef, functionalUpdate } from "@tanstack/react-table";
+import { useQuery } from "@tanstack/react-query";
 import { MessageCircleIcon } from "lucide-react";
 import { DataTable } from "./components/data-table";
 import { Button } from "./components/ui/button";
@@ -12,17 +14,6 @@ type CoffeeSales = {
   money: number;
   coffee_name: string;
 };
-
-const coffeSales: CoffeeSales[] = [
-  {
-    date: "2024-03-01",
-    datetime: "2024-03-01 10:15:50.520",
-    cash_type: "card",
-    card: "ANON-0000-0000-0001",
-    money: 38.7,
-    coffee_name: "Latte",
-  },
-];
 
 const columns: ColumnDef<CoffeeSales>[] = [
   {
@@ -44,6 +35,28 @@ const columns: ColumnDef<CoffeeSales>[] = [
 ];
 
 export function App() {
+  const [pagination, setPagination] = useState({
+    offset: 0,
+    pageIndex: 0,
+    pageSize: 25,
+  });
+
+  const { data } = useQuery({
+    queryKey: ["sales", pagination],
+    async queryFn() {
+      const { offset } = pagination;
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/sales?offset=${offset}`,
+      );
+      return (await res.json()) as Promise<{
+        data: CoffeeSales[];
+        count: number;
+        limit: number;
+        offset: number;
+      }>;
+    },
+  });
+
   return (
     <div className="3xl:max-w-screen-2xl mx-auto max-w-[1400px] p-4 lg:p-8 flex flex-1 scroll-mt-20 flex-col gap-4">
       <div className="flex flex-col gap-1">
@@ -74,7 +87,27 @@ export function App() {
         />
       </div>
 
-      <DataTable columns={columns} data={coffeSales} />
+      <DataTable
+        columns={columns}
+        data={data?.data || []}
+        pagination={{
+          pageSize: pagination.pageSize,
+          pageIndex: pagination.pageIndex,
+        }}
+        paginationOptions={{
+          onPaginationChange: (updater) => {
+            const newValue = functionalUpdate(updater, pagination);
+            const offset = newValue.pageIndex * newValue.pageSize;
+            const count = data?.count || 0;
+
+            setPagination({
+              ...newValue,
+              offset: offset > count ? count - newValue.pageSize : offset,
+            });
+          },
+          rowCount: data?.count,
+        }}
+      />
     </div>
   );
 }

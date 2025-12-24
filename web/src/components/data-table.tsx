@@ -1,5 +1,7 @@
 import {
   type ColumnDef,
+  type PaginationOptions,
+  type PaginationState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -19,20 +21,24 @@ import { DataTablePagination } from "./data-table-pagination";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  paginationOptions: Pick<PaginationOptions, "onPaginationChange" | "rowCount">;
+  pagination: PaginationState;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  paginationOptions,
+  pagination,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    initialState: {
-      pagination: {
-        pageSize: 25,
-      },
+    state: {
+      pagination,
     },
+    ...paginationOptions,
+    manualPagination: true,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   });
