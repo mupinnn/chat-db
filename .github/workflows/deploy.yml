@@ -23,8 +23,8 @@ jobs:
 
       - name: Build docker images
         run: |
-          docker build -t chat-db-web:latest -f web/Dockerfile .
-          docker build -t chat-db-api:latest -f api/Dockerfile .
+          docker build -t chat-db-web:latest -f web/Dockerfile ./web
+          docker build -t chat-db-api:latest -f api/Dockerfile ./api
 
       - name: Save docker images to tarball
         run: |
