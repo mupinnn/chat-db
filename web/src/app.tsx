@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { type ColumnDef, functionalUpdate } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
-import { MessageCircleIcon } from "lucide-react";
+import { MessageCircleIcon, CircleQuestionMarkIcon } from "lucide-react";
 import { DataTable } from "./components/data-table";
 import { Button } from "./components/ui/button";
 import { ChatSheet } from "./components/chat-sheet";
+import {
+  TooltipContent,
+  TooltipTrigger,
+  Tooltip,
+} from "./components/ui/tooltip";
 
 type CoffeeSales = {
   date: string;
@@ -19,6 +24,11 @@ const columns: ColumnDef<CoffeeSales>[] = [
   {
     accessorKey: "datetime",
     header: "Date",
+    cell: (props) =>
+      new Intl.DateTimeFormat("en", {
+        dateStyle: "long",
+        timeStyle: "medium",
+      }).format(new Date(props.row.original.datetime)),
   },
   {
     accessorKey: "cash_type",
@@ -26,7 +36,24 @@ const columns: ColumnDef<CoffeeSales>[] = [
   },
   {
     accessorKey: "money",
-    header: "Price",
+    header: () => (
+      <span className="flex items-center gap-2">
+        Price
+        <Tooltip>
+          <TooltipTrigger>
+            <CircleQuestionMarkIcon className="size-4" />
+          </TooltipTrigger>
+          <TooltipContent>
+            The price is on Ukrainian hryvnia (UAH)
+          </TooltipContent>
+        </Tooltip>
+      </span>
+    ),
+    cell: (props) =>
+      new Intl.NumberFormat("uk", {
+        style: "currency",
+        currency: "UAH",
+      }).format(props.row.original.money),
   },
   {
     accessorKey: "coffee_name",

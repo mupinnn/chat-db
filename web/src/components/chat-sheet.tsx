@@ -43,7 +43,12 @@ export function ChatSheet({ trigger }: { trigger: React.ReactNode }) {
           "Content-Type": "application/json",
         },
       });
-      if (!response.ok) throw new Error("Something went wrong");
+
+      if (!response.ok) {
+        const data = (await response.json()) as ChatResponse;
+        throw new Error(data.message || "Something went wrong.");
+      }
+
       return response.json();
     },
   });
@@ -73,7 +78,10 @@ export function ChatSheet({ trigger }: { trigger: React.ReactNode }) {
           <SheetTitle>Ask - Coffee Sales</SheetTitle>
           <SheetDescription>
             You can ask anything regarding the coffee sales data from the table
-            and expect to return a human-friendly response.
+            and expect some insights from it. As example:{" "}
+            <strong>
+              "How much sales and revenue per coffee on March 2024?"
+            </strong>
           </SheetDescription>
         </SheetHeader>
 

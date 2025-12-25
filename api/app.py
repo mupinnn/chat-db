@@ -219,7 +219,7 @@ def ask_sales():
             human_friendly_response = get_gemini_response(PROMPT_HUMAN_FRIENDLY.format(question=question, result=result))
             return jsonify({ 'data': human_friendly_response })
 
-    return jsonify({ 'message': "Can't query the data at the moment." }), 500
+    return jsonify({ 'message': "Could not give you some insight at the moment. Make sure you asking for transactional details from the provided table." }), 500
 
 if __name__ == '__main__':
     host = '0.0.0.0'
