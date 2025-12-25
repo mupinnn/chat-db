@@ -78,6 +78,14 @@ docker compose exec api python seed.py
 
 3. You can access the backend at http://localhost:5000 and try to access http://localhost:5000/api/health in your browser, `curl`, or any API tools to make sure it works.
 
+## Acknowledgement and resources
+
+- https://github.com/ardyadipta/gemini_chatbot_sql/
+- https://github.com/leodeveloper/google-gemini-chat-with-sqlserver/
+- https://github.com/ardyadipta/gemini_chatbot_qna
+- https://blog.laozhang.ai/api-guides/gemini-api-free-tier/
+- https://photokheecher.medium.com/building-a-smart-text-to-sql-system-with-rag-and-langchain-1958c041d4f4
+
 ## Gallery
 
 ![main page](./screenshots/dashboard2.png)
