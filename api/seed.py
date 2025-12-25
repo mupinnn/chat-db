@@ -5,7 +5,7 @@ import sqlite3
 from datetime import datetime
 
 DATABASE = os.getenv('DATABASE_PATH', '/app/data/db.sqlite')
-DEFAULT_CSV_PATH = os.getenv('CSV_SEED_FILE', '/app/data/seed.csv')
+DEFAULT_CSV_PATH = os.getenv('CSV_SEED_FILE', '/app/data/coffee-sales-datasets.csv')
 
 def get_db():
     conn = sqlite3.connect(DATABASE)
