@@ -10,9 +10,9 @@ services:
       context: ./web
       dockerfile: Dockerfile
     container_name: chat-db-web
-    env_file: ./web/.env.local
+    env_file: ./web/.env
     ports:
-      - "127.0.0.1:5173:80"
+      - "127.0.0.1:5174:80"
     depends_on:
       - api
     restart: unless-stopped
