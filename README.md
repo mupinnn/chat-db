@@ -1,31 +1,82 @@
-# Chat DB - A simple Gemini text-to-SQL app with human-friendly response
+# Chat DB - A simple app to chat with your database using Gemini
 
-This is a final project for Maju Bareng AI with Hacktiv8: AI for Data Scientist.
+Chat with your database in most human way possible and get the human-friendly response about your question
+without the need to understand SQL at all. This app can helps stakeholders to get business insights from their data really fast.
+
+I made this for Hacktiv8 Maju Bareng AI - AI for Data Scientist program's final project.
+
+## Stacks
+
+- Flask
+- Gemini 2.5 Flash
+- SQLite
+- React
+- Tanstack Query
+- shadcn/ui + Tailwind CSS
+- Nginx
+- Docker + Docker Compose
 
 ## Run locally
 
-### Web
+### Prepare the Gemini API key and other environment variables
 
-0. Install dependencies
+0. Visit https://aistudio.google.com/api-keys and create new API key
+1. Copy the `web/.env.example` to `web/.env.local` and `api/.env.example` to `.env`
+
+```sh
+cp web/.env.example web/.env.local
+cp api/.env.example web/.env
+```
+
+2. Fill the environment variables
+
+```sh
+# web/.env.local
+VITE_API_URL=http://localhost:5000/api
+
+# api/.env
+GOOGLE_API_KEY=<place your gemini API key here>
+ALLOWED_CORS_ORIGIN=http://localhost:5174
+FLASK_ENV=development
+PORT=5000
+```
+
+Next follow each services setup below.
+
+### Frontend (`web`)
+
+0. Make sure you have Bun installed, because the `Dockerfile` and the compose config for the `web` is only for production purpose; at least for right now
+1. Install dependencies
 
 ```sh
 cd web && bun install
 ```
 
+2. Run
+
+```sh
+cd web && bun dev
+```
+
+3. You can access the frontend at http://localhost:5174
+
+### Backend (`api`)
+
+0. Make sure you have Docker and `docker-compose` installed
 1. Run
 
 ```sh
-bun dev
+docker compose up -d
 ```
 
-### Api
-
-0. Make sure you have Docker and `docker-compose` installed.
-1. Run
+2. Seed the data to the database first before accessing the backend
 
 ```sh
-docker-compose up -d
+# this will seed the `api/data/coffee-sales-datasets.csv` to the SQLite database
+docker compose exec api python seed.py
 ```
+
+3. You can access the backend at http://localhost:5000 and try to access http://localhost:5000/api/health in your browser, `curl`, or any API tools to make sure it works.
 
 ## Gallery
 
