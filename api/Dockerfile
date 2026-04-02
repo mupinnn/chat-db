@@ -11,8 +11,4 @@ RUN mkdir -p /app/data
 
 EXPOSE ${PORT}
 
-CMD if [ "$FLASK_ENV" = "production" ]; then \
-      gunicorn --bind 0.0.0.0:${PORT} app:app; \
-    else \
-      python app.py; \
-    fi
+CMD ["python", "app.py"]
