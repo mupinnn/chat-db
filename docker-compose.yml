@@ -1,5 +1,6 @@
 services:
   api:
+    image: ghcr.io/mupinnn/chat-db-api:${IMAGE_TAG:-latest}
     build:
       context: ./api
       dockerfile: Dockerfile

@@ -1,18 +1,26 @@
 services:
   api:
+    env_file: !reset null
+    environment:
+      FLASK_ENV: production
+      DATABASE_PATH: /app/data/db.sqlite
+      PORT: "5000"
+      ALLOWED_CORS_ORIGIN: https://chat-db.13121957.xyz
     volumes: !override
       - sqlite_data:/app/data
     ports: !override
       - "127.0.0.1:${PORT:-5000}:${PORT:-5000}"
 
   web:
+    image: ghcr.io/mupinnn/chat-db-web:${IMAGE_TAG:-latest}
     build:
       context: ./web
       dockerfile: Dockerfile
+      args:
+        VITE_API_URL: /api
     container_name: chat-db-web
-    env_file: ./web/.env
-    ports:
-      - "127.0.0.1:5174:80"
     depends_on:
       - api
+    ports:
+      - "127.0.0.1:5174:80"
     restart: unless-stopped

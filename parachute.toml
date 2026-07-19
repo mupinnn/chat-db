@@ -1,0 +1,14 @@
+name = "chat-db"
+type = "compose"
+
+web_service = "web"
+hostnames = ["chat-db.13121957.xyz"]
+web_port = 80
+
+[service_secrets]
+api = ["GOOGLE_API_KEY"]
+
+[health]
+path = "/api/health"
+start_period_seconds = 10
+retries = 3
