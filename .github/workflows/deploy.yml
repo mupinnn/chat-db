@@ -8,6 +8,9 @@ on:
 jobs:
   deploy:
     uses: mupinnn/parachute/.github/workflows/deploy.yml@main
+    permissions:
+      contents: read
+      packages: write
     with:
       deployment-name: chat-db
       type: compose
