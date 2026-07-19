@@ -12,6 +12,7 @@ jobs:
       deployment-name: chat-db
       type: compose
       compose-files: "docker-compose.yml docker-compose.prod.yml"
+      join-tailscale: true
     secrets:
       parachute-url: ${{ secrets.PARACHUTE_URL }}
       deploy-token: ${{ secrets.PARACHUTE_DEPLOY_TOKEN }}
